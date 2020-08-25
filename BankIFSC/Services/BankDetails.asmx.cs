@@ -116,6 +116,38 @@ namespace BankIFSC.Services
                 }
             }
         }
+
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = true)]
+        public void DeleteBranch(string id)
+        {
+            using (SqlConnection con = new SqlConnection(conn))
+            {
+                using (SqlCommand cmd = new SqlCommand(string.Format(Queries.DELETEBRANCH, id)))
+                {
+                    try
+                    {
+                        con.Open();
+                        cmd.Connection = con;
+                        var result = cmd.ExecuteNonQuery();
+
+                        if (int.Parse(result.ToString()) > 0)
+                            Context.Response.StatusCode = (int)HttpStatusCode.Accepted;
+                        else
+                            Context.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
+                    }
+                    catch (Exception ex)
+                    {
+                        Context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    }
+                    finally
+                    {
+                        con.Close();
+                    }
+                }
+            }
+        }
+
     }
 }
 
