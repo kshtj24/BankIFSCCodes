@@ -50,6 +50,41 @@ namespace BankIFSC.Services
         }
 
         [WebMethod]
+        [ScriptMethod(UseHttpGet = true, ResponseFormat = ResponseFormat.Json)]
+        public void GetAllStates()
+        {
+            using (SqlConnection con = new SqlConnection(conn))
+            {
+                using (SqlCommand cmd = new SqlCommand(Queries.GETALLSTATES))
+                {
+                    try
+                    {
+                        con.Open();
+                        cmd.Connection = con;
+                        DataTable dataTable = new DataTable();
+
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                        {
+                            adapter.Fill(dataTable);
+                        }
+
+                        Context.Response.StatusCode = (int)HttpStatusCode.OK;
+                        Context.Response.Write(JsonConvert.SerializeObject(dataTable, Formatting.Indented));
+                    }
+                    catch (Exception ex)
+                    {
+                        Context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    }
+                    finally
+                    {
+                        con.Close();
+                    }
+                }
+            }
+
+        }
+
+        [WebMethod]
         [ScriptMethod(UseHttpGet =true, ResponseFormat=ResponseFormat.Json)]
         public void GetAllDistrictsForState(int stateID)
         {
